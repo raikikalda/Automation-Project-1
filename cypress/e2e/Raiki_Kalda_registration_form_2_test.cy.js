@@ -10,32 +10,92 @@ describe('Section 1: Functional tests', () => {
 
     it('User can use only same both first and validation passwords', ()=>{
         // Add test steps for filling in only mandatory fields
+        cy.get('#username').type('raikiusername')
+        cy.get('#email').type('raiki@gmail.com')
+        cy.get('[data-cy="name"]').type('raikieesnimi')
+        cy.get('#lastName').type('raikiperenimi')
+        cy.get('[data-testid="phoneNumberTestId"]').type('123456789')
+        
         // Type confirmation password which is different from first password
+        cy.get('#password').type('salasona123')
+        cy.get('#confirm').type('salasona')
+                
         // Assert that submit button is not enabled
+        cy.get('h2').contains('Password').click()
+        cy.get('.submit_button').should('not.be.enabled')
+
         // Assert that successful message is not visible
+        cy.get('#success_message').should('not.be.visible')
+
         // Assert that error message is visible
+        cy.get('#password_error_message').should('be.visible').should('contain', 'Passwords do not match!')
+
         // Change the test, so the passwords would match
+        cy.get('#confirm').clear()
+        cy.get('#confirm').type('salasona123')
+        cy.get('h2').contains('Password').click()
+
         // Add assertion, that error message is not visible anymore
+        cy.get('#password_error_message').should('not.be.visible')
+
         // Add assertion, that submit button is now enabled
+        cy.get('.submit_button').should('be.enabled')
     })
     
     it('User can submit form with all fields added', ()=>{
         // Add test steps for filling in ALL fields
+        cy.get('#username').type('raikiusername')
+        cy.get('#email').type('raiki@gmail.com')
+        cy.get('[data-cy="name"]').type('raikieesnimi')
+        cy.get('#lastName').type('raikiperenimi')
+        cy.get('[data-testid="phoneNumberTestId"]').type('123456789')
+        cy.get('[type="radio"]').first()
+        cy.get('[type="checkbox"]').check()
+        cy.get('#cars').select('audi')
+        cy.get('#animal').select('cow')
+        cy.get('#password').type('salasona123')
+        cy.get('#confirm').type('salasona123')
+
         // Assert that submit button is enabled
+        cy.get('h2').contains('Password').click()
+        cy.get('.submit_button').should('be.enabled')
+
         // Assert that after submitting the form system show successful message
+        cy.get('.submit_button').click()
+        cy.get('#success_message').should('be.visible')
     })
 
     it('User can submit form with valid data and only mandatory fields added', ()=>{
         // Add test steps for filling in ONLY mandatory fields
-        // Assert that submit button is enabled
-        // Assert that after submitting the form system shows successful message
+        cy.get('#username').type('raikiusername')
+        cy.get('#email').type('raiki@gmail.com')
+        cy.get('[data-cy="name"]').type('raikieesnimi')
+        cy.get('#lastName').type('raikiperenimi')
+        cy.get('[data-testid="phoneNumberTestId"]').type('123456789')
 
-        // example, how to use function, which fills in all mandatory data
-        // in order to see the content of the function, scroll to the end of the file
-        inputValidData('johnDoe')
+        // Assert that submit button is enabled
+        cy.get('h2').contains('Password').click()
+        cy.get('.submit_button').should('be.enabled')
+
+        // Assert that after submitting the form system shows successful message
+        cy.get('.submit_button').click()
+        cy.get('#success_message').should('be.visible')
     })
 
     // Add at least 1 test for checking some mandatory field's absence
+    it('User cannot submit data when phone number is absent', ()=>{
+        inputValidData('johnDoe')
+        cy.get('[data-testid="phoneNumberTestId"]').clear()
+        cy.get('h2').contains('Password').click()
+        cy.get('.submit_button').should('not.be.enabled')
+    })
+
+    it('User cannot submit data when last name is absent', ()=>{
+        inputValidData('johnDoe')
+        cy.get('#lastName').clear()
+        cy.get('h2').contains('Password').click()
+        cy.get('.submit_button').should('not.be.enabled')
+    })
 
 })
 
